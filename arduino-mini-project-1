@@ -1,0 +1,206 @@
+int a = 2;
+int b = 3;
+int c = 4;
+int d = 5;
+int e = 6;
+int f = 7;
+int g = 8;
+int dp = 9;
+
+int d1 = 10;
+int d2 = 11;
+int d3 = 12;
+int d4 = 13;
+
+
+int runBtnPin = A0;
+int cancelBtnPin = A1;
+int relayPin = A2;
+
+int lastRunBtnState = 1;
+int lastCancelBtnState = 1;
+
+
+unsigned long lastTime = 0;
+
+unsigned long lastTime7Seg = 0;
+unsigned int digitPos = 1;
+
+int value = 0;
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(runBtnPin, INPUT_PULLUP);
+  pinMode(cancelBtnPin, INPUT_PULLUP);
+  pinMode(relayPin, OUTPUT);
+  pinMode(a, OUTPUT);
+  pinMode(b, OUTPUT);
+  pinMode(c, OUTPUT);
+  pinMode(d, OUTPUT);
+  pinMode(e, OUTPUT);
+  pinMode(f, OUTPUT);
+  pinMode(g, OUTPUT);
+  pinMode(dp, OUTPUT);
+  pinMode(d1, OUTPUT);
+  pinMode(d2, OUTPUT);
+  pinMode(d3, OUTPUT);
+  pinMode(d4, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  int currentTime = millis();
+  if (currentTime - lastTime >= 1000) {
+    if (value > 0) {
+      value--;
+    }
+    lastTime = currentTime;
+  }
+
+  if (currentTime - lastTime7Seg >= 2) {
+    lastTime7Seg = currentTime;
+    digitPos++;
+    if (digitPos > 4) {
+      digitPos = 1;
+    }
+  }
+
+  int runBtnState = digitalRead(runBtnPin);
+  if (runBtnState == 0 && lastRunBtnState == 1) {
+    value = value + 10;
+    lastTime = currentTime;
+  }
+
+  int cancelBtnState = digitalRead(cancelBtnPin);
+  if (cancelBtnState == 0 && lastCancelBtnState == 1) {
+    value = 0;
+  }
+
+  if (value > 0) {
+    digitalWrite(relayPin, HIGH);
+  } else {
+    digitalWrite(relayPin, LOW);
+  }
+
+  unsigned int digitToShow = (value / (int)(pow(10, 4 - digitPos) + 0.5)) % 10;
+  showDigit(digitToShow);
+  if (digitPos == 1) {
+    digitalWrite(d1, LOW);
+    digitalWrite(d2, HIGH);
+    digitalWrite(d3, HIGH);
+    digitalWrite(d4, HIGH);
+  } else if (digitPos == 2) {
+    digitalWrite(d1, HIGH);
+    digitalWrite(d2, LOW);
+    digitalWrite(d3, HIGH);
+    digitalWrite(d4, HIGH);
+  } else if (digitPos == 3) {
+    digitalWrite(d1, HIGH);
+    digitalWrite(d2, HIGH);
+    digitalWrite(d3, LOW);
+    digitalWrite(d4, HIGH);
+  } else {
+    digitalWrite(d1, HIGH);
+    digitalWrite(d2, HIGH);
+    digitalWrite(d3, HIGH);
+    digitalWrite(d4, LOW);
+  }
+
+  lastRunBtnState = runBtnState;
+  lastCancelBtnState = cancelBtnState;
+}
+
+
+void showDigit(int digit) {
+  if (digit == 0) {
+    digitalWrite(a, HIGH);
+    digitalWrite(b, HIGH);
+    digitalWrite(c, HIGH);
+    digitalWrite(d, HIGH);
+    digitalWrite(e, HIGH);
+    digitalWrite(f, HIGH);
+    digitalWrite(g, LOW);
+    digitalWrite(dp, LOW);
+  } else if (digit == 1) {
+    digitalWrite(a, LOW);
+    digitalWrite(b, HIGH);
+    digitalWrite(c, HIGH);
+    digitalWrite(d, LOW);
+    digitalWrite(e, LOW);
+    digitalWrite(f, LOW);
+    digitalWrite(g, LOW);
+    digitalWrite(dp, LOW);
+  } else if (digit == 2) {
+    digitalWrite(a, HIGH);
+    digitalWrite(b, HIGH);
+    digitalWrite(c, LOW);
+    digitalWrite(d, HIGH);
+    digitalWrite(e, HIGH);
+    digitalWrite(f, LOW);
+    digitalWrite(g, HIGH);
+    digitalWrite(dp, LOW);
+  } else if (digit == 3) {
+    digitalWrite(a, HIGH);
+    digitalWrite(b, HIGH);
+    digitalWrite(c, HIGH);
+    digitalWrite(d, HIGH);
+    digitalWrite(e, LOW);
+    digitalWrite(f, LOW);
+    digitalWrite(g, HIGH);
+    digitalWrite(dp, LOW);
+  } else if (digit == 4) {
+    digitalWrite(a, LOW);
+    digitalWrite(b, HIGH);
+    digitalWrite(c, HIGH);
+    digitalWrite(d, LOW);
+    digitalWrite(e, LOW);
+    digitalWrite(f, HIGH);
+    digitalWrite(g, HIGH);
+    digitalWrite(dp, LOW);
+  } else if (digit == 5) {
+    digitalWrite(a, HIGH);
+    digitalWrite(b, LOW);
+    digitalWrite(c, HIGH);
+    digitalWrite(d, HIGH);
+    digitalWrite(e, LOW);
+    digitalWrite(f, HIGH);
+    digitalWrite(g, HIGH);
+    digitalWrite(dp, LOW);
+  } else if (digit == 6) {
+    digitalWrite(a, HIGH);
+    digitalWrite(b, LOW);
+    digitalWrite(c, HIGH);
+    digitalWrite(d, HIGH);
+    digitalWrite(e, HIGH);
+    digitalWrite(f, HIGH);
+    digitalWrite(g, HIGH);
+    digitalWrite(dp, LOW);
+  } else if (digit == 7) {
+    digitalWrite(a, HIGH);
+    digitalWrite(b, HIGH);
+    digitalWrite(c, HIGH);
+    digitalWrite(d, LOW);
+    digitalWrite(e, LOW);
+    digitalWrite(f, LOW);
+    digitalWrite(g, LOW);
+    digitalWrite(dp, LOW);
+  } else if (digit == 8) {
+    digitalWrite(a, HIGH);
+    digitalWrite(b, HIGH);
+    digitalWrite(c, HIGH);
+    digitalWrite(d, HIGH);
+    digitalWrite(e, HIGH);
+    digitalWrite(f, HIGH);
+    digitalWrite(g, HIGH);
+    digitalWrite(dp, LOW);
+  } else if (digit == 9) {
+    digitalWrite(a, HIGH);
+    digitalWrite(b, HIGH);
+    digitalWrite(c, HIGH);
+    digitalWrite(d, HIGH);
+    digitalWrite(e, LOW);
+    digitalWrite(f, HIGH);
+    digitalWrite(g, HIGH);
+    digitalWrite(dp, LOW);
+  }
+}
